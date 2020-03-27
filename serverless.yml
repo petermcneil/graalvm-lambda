@@ -1,0 +1,36 @@
+service: graalvm-hello-world-java
+
+provider:
+  name: aws
+  runtime: java11
+  region: eu-west-1
+
+package:
+  individually: true
+
+functions:
+  hello:
+    handler: mcneil.peter.Handler
+    events:
+      - http:
+          path: hello/{name}
+          method: get
+    package:
+      artifact: build/libs/package-1.0-all.jar
+  HelloRuntime:
+    handler: mcneil.peter.Handler
+    runtime: provided
+    events:
+      - http:
+          path: hello-runtime/{name}
+          method: get
+    package:
+      artifact: build/package/bundle.zip
+
+resources:
+  Outputs:
+    HelloRuntimeQualifiedArn:
+      Export:
+        Name:  graalvm-hello-world-javaArn
+      Value:
+        Ref: "AWS::AccountId"

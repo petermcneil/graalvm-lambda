@@ -1,16 +1,43 @@
 plugins {
     id 'java'
+    id("com.github.johnrengelman.shadow") version "5.1.0"
 }
 
 group 'mcneil.peter'
-version '1.0-SNAPSHOT'
+version '1.0'
 
-sourceCompatibility = 1.13
+sourceCompatibility = 1.11
 
 repositories {
     mavenCentral()
 }
 
-dependencies {
+shadowJar {
+    baseName = "package"
+    manifest {
+        attributes "Main-Class": "mcneil.peter.Application"
+    }
+}
 
+dependencies {
+    compile("com.amazonaws:aws-lambda-java-core:1.2.0")
+    compile("com.fasterxml.jackson.core:jackson-databind:2.10.3")
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.6.1'
+}
+
+task pack(type: Exec) {
+    commandLine './package.sh'
+}
+
+task deploy(type: Exec) {
+    commandLine 'serverless deploy --verbose'
+}
+
+deploy.dependsOn.pack
+
+
+test {
+    environment "AWS_LAMBDA_RUNTIME_API", "http://127.0.0.1:9001/blah/blah"
+    environment "_HANDLER", "mcneil.peter.Handler"
+    useJUnitPlatform()
 }
