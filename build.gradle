@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+}
+
+group 'mcneil.peter'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.13
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+}
